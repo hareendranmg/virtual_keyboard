@@ -1,0 +1,23 @@
+name: example
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  virtual_keyboard:
+    path: ../
+
+
+dev_dependencies:
+  dart_code_metrics: ^5.6.0
+  lint: ^2.0.1
+
+flutter:
+  uses-material-design: true
