@@ -14,6 +14,7 @@ class VirtualKeyboard extends StatefulWidget {
   /// The text controller
   final TextEditingController textController;
 
+  // TODO: Create focusnode within the package
   final FocusNode focusNode;
 
   /// Virtual keyboard height. Default is 300
@@ -40,6 +41,8 @@ class VirtualKeyboard extends StatefulWidget {
     this.textColor = Colors.black,
     this.fontSize = 14,
     this.alwaysCaps = true,
+    // TODO: Create focusnode within the package
+
     required this.focusNode,
   });
 
@@ -56,6 +59,8 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
   Widget Function(BuildContext context, VirtualKeyboardKey key)? builder;
   late double height;
   late TextEditingController textController;
+  // TODO: Create focusnode within the package
+
   late FocusNode focusNode;
   late Color textColor;
   late double fontSize;
@@ -89,6 +94,8 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
     super.initState();
 
     textController = widget.textController;
+    // TODO: Create focusnode within the package
+
     focusNode = widget.focusNode;
     type = widget.type;
     height = widget.height;
@@ -211,6 +218,8 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
 
   void _onKeyPress(VirtualKeyboardKey key) {
     if (key.keyType == VirtualKeyboardKeyType.String) {
+      // TODO: Create focusnode within the package
+
       focusNode.requestFocus();
       final cursorPos = textController.selection.base.offset;
 
