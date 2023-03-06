@@ -36,10 +36,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isNumericMode = true;
 
   late TextEditingController _controllerText;
+  late FocusNode myFocusNode;
 
   @override
   void initState() {
     _controllerText = TextEditingController();
+    myFocusNode = FocusNode();
+
     super.initState();
   }
 
@@ -59,6 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 5,
+                showCursor: true,
+                autofocus: true,
+                focusNode: myFocusNode,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Your text',
@@ -84,10 +90,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? VirtualKeyboardType.Numeric
                   : VirtualKeyboardType.Alphanumeric,
               textController: _controllerText,
+              focusNode: myFocusNode,
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controllerText.dispose();
+    myFocusNode.dispose();
+
+    super.dispose();
   }
 }

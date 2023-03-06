@@ -14,6 +14,8 @@ class VirtualKeyboard extends StatefulWidget {
   /// The text controller
   final TextEditingController textController;
 
+  final FocusNode focusNode;
+
   /// Virtual keyboard height. Default is 300
   final double height;
 
@@ -38,6 +40,7 @@ class VirtualKeyboard extends StatefulWidget {
     this.textColor = Colors.black,
     this.fontSize = 14,
     this.alwaysCaps = true,
+    required this.focusNode,
   });
 
   @override
@@ -53,6 +56,7 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
   Widget Function(BuildContext context, VirtualKeyboardKey key)? builder;
   late double height;
   late TextEditingController textController;
+  late FocusNode focusNode;
   late Color textColor;
   late double fontSize;
   late bool alwaysCaps;
@@ -85,6 +89,7 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
     super.initState();
 
     textController = widget.textController;
+    focusNode = widget.focusNode;
     type = widget.type;
     height = widget.height;
     textColor = widget.textColor;
@@ -206,13 +211,37 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
 
   void _onKeyPress(VirtualKeyboardKey key) {
     if (key.keyType == VirtualKeyboardKeyType.String) {
-      textController.text += isShiftEnabled ? key.capsText! : key.text!;
+      focusNode.requestFocus();
+      final cursorPos = textController.selection.base.offset;
+
+      // Right text of cursor position
+      final suffixText = textController.text.substring(cursorPos);
+      // Get the left text of cursor
+      final prefixText = textController.text.substring(0, cursorPos);
+
+      textController.text = prefixText + key.text! + suffixText;
+
+      // Cursor move to end of added text
+      textController.selection = TextSelection(
+        baseOffset: cursorPos + 1,
+        extentOffset: cursorPos + 1,
+      );
+      // textController.text += isShiftEnabled ? key.capsText! : key.text!;
     } else if (key.keyType == VirtualKeyboardKeyType.Action) {
       switch (key.action) {
         case VirtualKeyboardKeyAction.Backspace:
           if (textController.text.isEmpty) return;
-          textController.text =
-              textController.text.substring(0, textController.text.length - 1);
+          // check if text has selection, if so delete the selection else delete the last character
+          textController.text = textController.selection.baseOffset !=
+                  textController.selection.extentOffset
+              ? textController.text.replaceRange(
+                  textController.selection.baseOffset,
+                  textController.selection.extentOffset,
+                  '',
+                )
+              : textController.text
+                  .substring(0, textController.text.length - 1);
+          focusNode.requestFocus();
           break;
         case VirtualKeyboardKeyAction.Return:
           textController.text += '\n';
