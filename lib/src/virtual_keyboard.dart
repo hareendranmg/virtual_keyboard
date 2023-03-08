@@ -2,7 +2,7 @@ part of virtual_keyboard;
 
 /// The default keyboard height. Can we overriden by passing
 ///  `height` argument to `VirtualKeyboard` widget.
-const double _virtualKeyboardDefaultHeight = 300;
+const double _virtualKeyboardDefaultHeight = 270;
 
 const int _virtualKeyboardBackspaceEventPerioud = 250;
 
@@ -14,7 +14,6 @@ class VirtualKeyboard extends StatefulWidget {
   /// The text controller
   final TextEditingController textController;
 
-  // TODO: Create focusnode within the package
   final FocusNode focusNode;
 
   /// Virtual keyboard height. Default is 300
@@ -41,8 +40,6 @@ class VirtualKeyboard extends StatefulWidget {
     this.textColor = Colors.black,
     this.fontSize = 14,
     this.alwaysCaps = true,
-    // TODO: Create focusnode within the package
-
     required this.focusNode,
   });
 
@@ -59,7 +56,6 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
   Widget Function(BuildContext context, VirtualKeyboardKey key)? builder;
   late double height;
   late TextEditingController textController;
-  // TODO: Create focusnode within the package
 
   late FocusNode focusNode;
   late Color textColor;
@@ -94,7 +90,6 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
     super.initState();
 
     textController = widget.textController;
-    // TODO: Create focusnode within the package
 
     focusNode = widget.focusNode;
     type = widget.type;
@@ -217,11 +212,10 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
   }
 
   void _onKeyPress(VirtualKeyboardKey key) {
+    focusNode.requestFocus();
     if (key.keyType == VirtualKeyboardKeyType.String) {
-      // TODO: Create focusnode within the package
-
-      focusNode.requestFocus();
-      final cursorPos = textController.selection.base.offset;
+      final cursorPos = textController.selection.baseOffset;
+      // print(cursorPos);
 
       // Right text of cursor position
       final suffixText = textController.text.substring(cursorPos);
@@ -240,17 +234,19 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
       switch (key.action) {
         case VirtualKeyboardKeyAction.Backspace:
           if (textController.text.isEmpty) return;
-          // check if text has selection, if so delete the selection else delete the last character
-          textController.text = textController.selection.baseOffset !=
-                  textController.selection.extentOffset
-              ? textController.text.replaceRange(
-                  textController.selection.baseOffset,
-                  textController.selection.extentOffset,
-                  '',
-                )
-              : textController.text
-                  .substring(0, textController.text.length - 1);
-          focusNode.requestFocus();
+          final value = textController.value;
+          final cursorPosition = value.selection.baseOffset;
+          final text = value.text;
+          if (cursorPosition > 0) {
+            final newText = text.substring(0, cursorPosition - 1) +
+                text.substring(cursorPosition);
+            textController.value = value.copyWith(
+              text: newText,
+              selection: TextSelection.collapsed(offset: cursorPosition - 1),
+            );
+          }
+          // // check if text
+          // tFocus();
           break;
         case VirtualKeyboardKeyAction.Return:
           textController.text += '\n';

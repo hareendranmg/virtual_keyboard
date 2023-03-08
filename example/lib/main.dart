@@ -60,8 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: TextField(
                 controller: _controllerText,
                 keyboardType: TextInputType.multiline,
-                minLines: 1,
-                maxLines: 5,
+                minLines: 5,
+                maxLines: null,
                 showCursor: true,
                 autofocus: true,
                 focusNode: myFocusNode,
@@ -71,24 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            SwitchListTile(
-              title: Text(
-                'Keyboard Type = ${isNumericMode ? 'VirtualKeyboardType.Numeric' : 'VirtualKeyboardType.Alphanumeric'}',
-              ),
-              value: isNumericMode,
-              onChanged: (val) {
-                setState(() {
-                  isNumericMode = val;
-                });
-              },
-            ),
-            Expanded(
-              child: Container(),
-            ),
             VirtualKeyboard(
-              type: isNumericMode
-                  ? VirtualKeyboardType.Numeric
-                  : VirtualKeyboardType.Alphanumeric,
+              type: VirtualKeyboardType.Alphanumeric,
               textController: _controllerText,
               focusNode: myFocusNode,
             ),
