@@ -200,9 +200,7 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
           height: height / _keyRows.length,
           child: Center(
             child: Text(
-              alwaysCaps
-                  ? key.capsText!
-                  : (isShiftEnabled ? key.capsText! : key.text!),
+              isShiftEnabled ? key.capsText! : key.text!,
               style: textStyle,
             ),
           ),
@@ -222,7 +220,9 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
       // Get the left text of cursor
       final prefixText = textController.text.substring(0, cursorPos);
 
-      textController.text = prefixText + key.text! + suffixText;
+      textController.text = prefixText +
+          (isShiftEnabled ? key.capsText! : key.text!) +
+          suffixText;
 
       // Cursor move to end of added text
       textController.selection = TextSelection(
@@ -249,13 +249,23 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
           // tFocus();
           break;
         case VirtualKeyboardKeyAction.Return:
-          textController.text += '\n';
+          final value = textController.value;
+          final cursorPosition = value.selection.baseOffset;
+          final text = value.text;
+          if (cursorPosition > 0) {
+            final newText =
+                '${text.substring(0, cursorPosition)}\n${text.substring(cursorPosition)}';
+            textController.value = value.copyWith(
+              text: newText,
+              selection: TextSelection.collapsed(offset: cursorPosition + 1),
+            );
+          }
           break;
         case VirtualKeyboardKeyAction.Space:
           textController.text += key.text!;
           break;
-        // case VirtualKeyboardKeyAction.Shift:
-        // break;
+        case VirtualKeyboardKeyAction.Shift:
+          break;
         default:
       }
     }
@@ -299,30 +309,25 @@ class _VirtualKeyboardState extends State<VirtualKeyboard> {
           ),
         );
         break;
-      // case VirtualKeyboardKeyAction.Shift:
-      //   actionKey = Icon(Icons.arrow_upward, color: textColor);
-      //   break;
+      case VirtualKeyboardKeyAction.Shift:
+        actionKey = Icon(Icons.arrow_upward, color: textColor);
+        break;
       case VirtualKeyboardKeyAction.Space:
         actionKey = actionKey = Icon(Icons.space_bar, color: textColor);
         break;
       case VirtualKeyboardKeyAction.Return:
-        actionKey = Icon(
-          Icons.keyboard_return,
-          color: textColor,
-        );
+        actionKey = Icon(Icons.keyboard_return, color: textColor);
         break;
     }
 
     return Expanded(
       child: InkWell(
         onTap: () {
-          // if (key.action == VirtualKeyboardKeyAction.Shift) {
-          //   if (!alwaysCaps) {
-          //     setState(() {
-          //       isShiftEnabled = !isShiftEnabled;
-          //     });
-          //   }
-          // }
+          if (key.action == VirtualKeyboardKeyAction.Shift) {
+            setState(() {
+              isShiftEnabled = !isShiftEnabled;
+            });
+          }
 
           _onKeyPress(key);
         },

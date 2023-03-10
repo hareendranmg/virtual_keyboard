@@ -157,12 +157,12 @@ List<List<VirtualKeyboardKey>> _getKeyboardRows() {
         break;
       case 3:
         // Left Shift
-        // rowKeys.add(
-        //   VirtualKeyboardKey(
-        //     keyType: VirtualKeyboardKeyType.Action,
-        //     action: VirtualKeyboardKeyAction.Shift,
-        //   ),
-        // );
+        rowKeys.add(
+          VirtualKeyboardKey(
+            keyType: VirtualKeyboardKeyType.Action,
+            action: VirtualKeyboardKeyAction.Shift,
+          ),
+        );
 
         // String keys.
         rowKeys.addAll(_getKeyboardRowKeys(rowNum));
